@@ -13,16 +13,12 @@ export default {
     channels: {
       GlobalChannel: {
         connected() {
-          console.log('Connected')
         },
         rejected() {
-          console.log('Rejected')
         },
-        received(data) {
-          console.log('Received:' + JSON.stringify(data))
+        received() {
         },
         disconnected() {
-          console.log('Disconnected')
         }
       }
     },
