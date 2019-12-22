@@ -8,6 +8,42 @@
   </div>
 </template>
 
+<script>
+export default {
+    channels: {
+      GlobalChannel: {
+        connected() {
+          console.log('Connected')
+        },
+        rejected() {
+          console.log('Rejected')
+        },
+        received(data) {
+          console.log('Received:' + JSON.stringify(data))
+        },
+        disconnected() {
+          console.log('Disconnected')
+        }
+      }
+    },
+    mounted() {
+      this.$cable.subscribe({
+        channel: 'GlobalChannel',
+        room: 'public'
+      });
+      setTimeout(() => {
+        this.$cable.perform({
+          channel: 'GlobalChannel',
+            action: 'notify',
+            data: {
+                ok: 'ok'
+            }
+        });
+      }, 2000)
+    }
+}
+</script>
+
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
