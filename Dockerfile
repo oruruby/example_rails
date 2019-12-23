@@ -4,6 +4,7 @@ WORKDIR /app
 COPY Gemfile Gemfile.lock ./ 
 RUN bundle install
 EXPOSE 3000
+EXPOSE 50051
 
 ENTRYPOINT ["bundle", "exec"]
 

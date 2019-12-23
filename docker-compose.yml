@@ -1,18 +1,75 @@
 version: '3.4'
 
-services: 
-  backend:
-    build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    ports:
-    - "3000:3000"
+services:
+  app: &app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     volumes:
-    - .:/app
+      - .:/app
+    tmpfs:
+      - /tmp
+  backend: &backend
+    <<: *app
+    environment:
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - REDIS_URL=redis://redis:6379/0
+      - CABLE_URL=ws://localhost:8080/cable
+      - ADAPTER=any_cable
+    depends_on:
+      - redis
+  web:
+    <<: *backend
+    command: bash -c "bundle exec rails server -b 0.0.0.0 -P tmp/pids/server.pid"
+    ports:
+      - '3000:3000'
+    depends_on:
+      - rpc
+      - ws
+  rpc:
+    <<: *backend
+    command: bash -c "kill -9 1 && rm -f tmp/pids/server.pid && anycable"
+  redis:
+    image: redis:3.2-alpine
+    volumes:
+      - redis:/data
+    ports:
+      - 6379
+  ws:
+    image: 'anycable/anycable-go:v0.6.0'
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - REDIS_URL=redis://redis:6379/0
+      - ANYCABLE_RPC_HOST=rpc:50051
+    depends_on:
+      - redis
+      - rpc
   frontend:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
     ports:
-    - "8080:80"
+      - "80:80"
     volumes:
-    - .:/app
+      - .:/app
+volumes:
+  redis:
+  assets:
+# services: 
+#   backend:
+#     build: .
+#     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+#     ports:
+#     - "3000:3000"
+#     volumes:
+#     - .:/app
+#   frontend:
+#     build:
+#       context: ./frontend
+#       dockerfile: ./Dockerfile
+#     ports:
+#     - "8080:80"
+#     volumes:
+#     - .:/app
