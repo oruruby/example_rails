@@ -24,7 +24,7 @@ module ExampleApp
     config.load_defaults 6.0
     config.api_only = true
     config.action_cable.disable_request_forgery_protection = true
-    config.action_cable.url = Nenv.cable_url
+    config.action_cable.url = Nenv.cable_url? ? Nenv.cable_url : 'ws://localhost/cable'
     config.action_cable.mount_path = Nenv.cable_url? ? nil : "/cable"
     config.any_cable_rack.run_rpc = true
   end

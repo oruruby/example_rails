@@ -8,4 +8,4 @@ EXPOSE 50051
 
 ENTRYPOINT ["bundle", "exec"]
 
-CMD ["rails", "server", "-b", "0.0.0.0"]
+# CMD ["rails", "server", "-b", "0.0.0.0"]

@@ -4,6 +4,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
+    qwe
     <router-view/>
   </div>
 </template>
@@ -13,6 +14,7 @@ export default {
     channels: {
       GlobalChannel: {
         connected() {
+          console.log('qqqconnected')
         },
         rejected() {
         },
@@ -32,7 +34,7 @@ export default {
           channel: 'GlobalChannel',
             action: 'notify',
             data: {
-                ok: 'ok'
+                ok: 'qweqwe'
             }
         });
       }, 2000)
